@@ -15,9 +15,17 @@ namespace toyproject
             {
                 MessageBox.Show("아이디를 입력해 주세요!", "로그인", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+            else if (!admin.ID_Check(admin.ID))
+            {
+                MessageBox.Show("아이디를 정확히 입력해 주세요!", "로그인", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
             else if (admin.Password == "")
             {
                 MessageBox.Show("비밀번호를 입력해 주세요!", "로그인", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else if (!admin.PW_Check(admin.ID, admin.Password))
+            {
+                MessageBox.Show("비밀번호를 정확히 입력해 주세요!", "로그인", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else
             {
