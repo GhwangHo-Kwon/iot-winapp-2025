@@ -65,6 +65,7 @@
             TxtPW.PasswordChar = '●';
             TxtPW.Size = new Size(169, 23);
             TxtPW.TabIndex = 2;
+            TxtPW.KeyDown += TxtPW_KeyDown;
             // 
             // TxtId
             // 

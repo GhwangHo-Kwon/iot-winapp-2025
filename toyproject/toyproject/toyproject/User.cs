@@ -35,11 +35,14 @@ namespace toyproject
         public List<KeyValuePair<string, string>> strDate {  get; set; }
         public List<KeyValuePair<string, int>> intDate {  get; set; }
 
-        private void Age_Proc()
+        public int Age_Proc()
         {
-            int age = 0;
+            string[] birth = Birth.Split('-');
+            DateTime Birthday = new(int.Parse(birth[0]), int.Parse(birth[1]), int.Parse(birth[2]));
 
-            //age = (int)(DateTime.Today.Year) - (int)Birth.ToArray(0, 4);
+            int age = (int)(((DateTime.UtcNow - Birthday).TotalDays) / 365.2425);
+            
+            return age;
         }
 
         public void DB_Add()
@@ -48,7 +51,7 @@ namespace toyproject
             //intDate = new List<KeyValuePair<string, int>>();
 
             string connectionString = "Server=localhost;Database=minigame;Uid=root;Pwd=12345;Charset=utf8";
-            string query = $"INSERT INTO User(login_id, login_pw, user_name, user_phone, user_email, user_gender, user_birth, user_age) VALUES ('{ID}', '{Password}', '{Name}', '{Phone}', '{Email}', {Gender}, '{Birth}', 21)";
+            string query = $"INSERT INTO User(login_id, login_pw, user_name, user_phone, user_email, user_gender, user_birth, user_age) VALUES ('{ID}', '{Password}', '{Name}', '{Phone}', '{Email}', {Gender}, '{Birth}', {Age})";
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 try

@@ -275,6 +275,7 @@
             TxtPhone.Size = new Size(164, 23);
             TxtPhone.TabIndex = 9;
             TxtPhone.TextChanged += TxtPhone_TextChanged;
+            TxtPhone.KeyDown += TxtPhone_KeyDown;
             // 
             // Join
             // 

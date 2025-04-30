@@ -37,7 +37,7 @@ namespace toyproject
                         {
                             if (ChkPhone.Checked)
                             {
-                                Admin_Join();
+                                User_Join();
                                 MessageBox.Show("가입 하셨습니다.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 this.FormClosing -= Join_FormClosing;
                                 Close();
@@ -48,9 +48,17 @@ namespace toyproject
                     }
                     else MessageBox.Show("비밀번호를 다시확인해주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
-                else MessageBox.Show("아이디 중복!\r\n다시 입력해주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning); 
+                else MessageBox.Show("아이디 중복!\r\n다시 입력해주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else MessageBox.Show("아이디를 적어주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        private void TxtPhone_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                BtnJoin_Click(sender, e);
+            }
         }
 
         private void TxtID_TextChanged(object sender, EventArgs e)
@@ -133,20 +141,21 @@ namespace toyproject
                 e.Cancel = true;
             }
         }
-        public void Admin_Join()
+        public void User_Join()
         {
-            User admin = new User();
+            User user = Program.user;
 
-            admin.ID = TxtID.Text.Trim();
-            admin.Password = TxtPW.Text.Trim();
-            admin.Name = TxtName.Text.Trim();
-            admin.Email = TxtEmail.Text.Trim();
-            admin.Birth = DtpBirth.Value.ToString("yyyy-MM-dd");
-            admin.Phone = TxtPhone.Text.Trim();
-            if (RbtMan.Checked) admin.Gender = 0;
-            else admin.Gender = 1;
+            user.ID = TxtID.Text.Trim();
+            user.Password = TxtPW.Text.Trim();
+            user.Name = TxtName.Text.Trim();
+            user.Email = TxtEmail.Text.Trim();
+            user.Birth = DtpBirth.Value.ToString("yyyy-MM-dd");
+            user.Phone = TxtPhone.Text.Trim();
+            user.Age = user.Age_Proc();
+            if (RbtMan.Checked) user.Gender = 0;
+            else user.Gender = 1;
 
-            admin.DB_Add();
+            user.DB_Add();
             //MessageBox.Show($"{admin.ID}, {admin.Password}, {admin.Name}, {admin.Email}, {admin.Birth}, {admin.Phone}, {admin.Gender}");
         }
 

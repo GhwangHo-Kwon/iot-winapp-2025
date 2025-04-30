@@ -1,3 +1,5 @@
+using System.Reflection.Metadata.Ecma335;
+
 namespace toyproject
 {
     public partial class Login : Form
@@ -9,7 +11,7 @@ namespace toyproject
 
         private void BtnLogin_Click(object sender, EventArgs e)
         {
-            User admin = Admin_Info();
+            User admin = User_Info();
 
             if (admin.ID == "")
             {
@@ -33,9 +35,18 @@ namespace toyproject
                 TxtId.Text = "";
                 TxtPW.Text = "";
 
+                this.ActiveControl = TxtId;
                 Hide();
                 WallPaper main = new WallPaper();
                 main.Show();
+            }
+        }
+
+        private void TxtPW_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                BtnLogin_Click(sender, e);
             }
         }
 
@@ -61,14 +72,14 @@ namespace toyproject
                 Application.Exit();
             }
         }
-        private User Admin_Info()
+        private User User_Info()
         {
-            User admin = new User();
+            User user = Program.user;
 
-            admin.ID = TxtId.Text.Trim();
-            admin.Password = TxtPW.Text.Trim();
+            user.ID = TxtId.Text.Trim();
+            user.Password = TxtPW.Text.Trim();
 
-            return admin;
+            return user;
         }
     }
 }
