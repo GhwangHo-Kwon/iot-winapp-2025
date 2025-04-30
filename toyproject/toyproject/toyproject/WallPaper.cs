@@ -39,24 +39,28 @@ namespace toyproject
         private void BtnBefore2_Click(object sender, EventArgs e)
         {
             TabControl1.Hide();
+            LblGameName.Text = "게임선택화면";
         }
 
         private void BtnSamePic_Click(object sender, EventArgs e)
         {
             TabControl1.SelectTab(0);
             TabControl1.Show();
+            LblGameName.Text = "같은그림찾기";
         }
 
         private void BtnBingo_Click(object sender, EventArgs e)
         {
             TabControl1.SelectTab(1);
             TabControl1.Show();
+            LblGameName.Text = "빙고";
         }
 
         private void BtnTetris_Click(object sender, EventArgs e)
         {
             TabControl1.SelectTab(2);
             TabControl1.Show();
+            LblGameName.Text = "테트리스";
         }
 
         private void BtnPicServer_Click(object sender, EventArgs e)

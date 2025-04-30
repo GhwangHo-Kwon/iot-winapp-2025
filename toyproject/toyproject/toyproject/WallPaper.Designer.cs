@@ -180,7 +180,7 @@
             LblGameName.Name = "LblGameName";
             LblGameName.Size = new Size(384, 54);
             LblGameName.TabIndex = 1;
-            LblGameName.Text = "선택";
+            LblGameName.Text = "게임선택화면";
             LblGameName.TextAlign = ContentAlignment.TopCenter;
             // 
             // BtnSamePic
