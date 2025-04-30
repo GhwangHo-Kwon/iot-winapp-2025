@@ -27,30 +27,30 @@ namespace toyproject
         {
             bool idCheck = Program.user.ID_Dupl(TxtID.Text);
 
-            if (idCheck)
-            {
             if (ChkID.Checked)
             {
-                if (ChkPW.Checked)
+                if (!idCheck)
                 {
-                    if (ChkName.Checked)
+                    if (ChkPW.Checked)
                     {
-                        if (ChkPhone.Checked)
+                        if (ChkName.Checked)
                         {
-                            Admin_Join();
-                            MessageBox.Show("가입 하셨습니다.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            this.FormClosing -= Join_FormClosing;
-                            Close();
+                            if (ChkPhone.Checked)
+                            {
+                                Admin_Join();
+                                MessageBox.Show("가입 하셨습니다.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                this.FormClosing -= Join_FormClosing;
+                                Close();
+                            }
+                            else MessageBox.Show("전화번호를 다시확인해주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
-                        else MessageBox.Show("전화번호를 다시확인해주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        else MessageBox.Show("이름을 적어주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
-                    else MessageBox.Show("이름을 적어주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    else MessageBox.Show("비밀번호를 다시확인해주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
-                else MessageBox.Show("비밀번호를 다시확인해주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                else MessageBox.Show("아이디 중복!\r\n다시 입력해주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning); 
             }
             else MessageBox.Show("아이디를 적어주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            else MessageBox.Show("아이디 중복!\r\n다시 입력해주세요.", "회원가입", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private void TxtID_TextChanged(object sender, EventArgs e)

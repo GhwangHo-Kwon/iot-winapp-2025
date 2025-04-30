@@ -35,6 +35,13 @@ namespace toyproject
         public List<KeyValuePair<string, string>> strDate {  get; set; }
         public List<KeyValuePair<string, int>> intDate {  get; set; }
 
+        private void Age_Proc()
+        {
+            int age = 0;
+
+            //age = (int)(DateTime.Today.Year) - (int)Birth.ToArray(0, 4);
+        }
+
         public void DB_Add()
         {
             //strDate = new List<KeyValuePair<string, string>>();
