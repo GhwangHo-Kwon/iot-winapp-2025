@@ -18,7 +18,7 @@ namespace toyproject
             
             login = new Login();
             user = new User();
-            Application.Run(login);
+            Application.Run(new Bingo());
         }
     }
 }
