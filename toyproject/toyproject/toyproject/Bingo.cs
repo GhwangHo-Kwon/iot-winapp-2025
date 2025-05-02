@@ -161,5 +161,21 @@ namespace toyproject
             }
             return null;
         }
+
+        public static T[] Random_Shuffle<T>(T[] array)
+        {
+            Random rand = new Random();
+
+            for (int i = array.Length - 1; i > 0; i--)
+            {
+                int j = rand.Next(0, i + 1);
+
+                T temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+
+            return array;
+        }
     }
 }
