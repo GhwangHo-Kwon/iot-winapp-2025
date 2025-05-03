@@ -162,5 +162,35 @@ namespace toyproject
                 return false;
             }
         }
+
+        public string User_Name()
+        {
+            string connectionString = "Server=localhost;Database=minigame;Uid=root;Pwd=12345;Charset=utf8";
+            string query = $"SELECT user_name FROM User where login_id = '{ID}'";
+
+            strDate = new List<KeyValuePair<string, string>>();
+
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        var user_name = reader.GetString("user_name");
+
+                        if (user_name is not null) return user_name;
+                    }
+                }
+                catch (MySqlException ex)
+                {
+                    Console.WriteLine("오류 : " + ex.Message);
+                }
+                return "";
+            }
+        }
     }
 }

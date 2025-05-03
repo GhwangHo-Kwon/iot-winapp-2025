@@ -30,13 +30,13 @@
         {
             TabControl1 = new TabControl();
             TbcSamePic = new TabPage();
-            BtnPicServer = new Button();
+            TlpSamePic = new TableLayoutPanel();
             BtnBefore2 = new Button();
             TbcBingo = new TabPage();
-            BtnbingoServer = new Button();
+            TlpBingo = new TableLayoutPanel();
             BtnBefore3 = new Button();
             TbcTeris = new TabPage();
-            BtnTetrisServer = new Button();
+            TlpTetris = new TableLayoutPanel();
             BtnBefore4 = new Button();
             tabPage4 = new TabPage();
             LblGameName = new Label();
@@ -59,40 +59,46 @@
             TabControl1.Controls.Add(TbcTeris);
             TabControl1.Controls.Add(tabPage4);
             TabControl1.ItemSize = new Size(0, 1);
-            TabControl1.Location = new Point(12, 67);
+            TabControl1.Location = new Point(15, 89);
+            TabControl1.Margin = new Padding(4);
             TabControl1.Name = "TabControl1";
             TabControl1.SelectedIndex = 0;
-            TabControl1.Size = new Size(360, 382);
+            TabControl1.Size = new Size(463, 509);
             TabControl1.SizeMode = TabSizeMode.Fixed;
             TabControl1.TabIndex = 0;
             // 
             // TbcSamePic
             // 
-            TbcSamePic.Controls.Add(BtnPicServer);
+            TbcSamePic.Controls.Add(TlpSamePic);
             TbcSamePic.Controls.Add(BtnBefore2);
             TbcSamePic.Location = new Point(4, 5);
+            TbcSamePic.Margin = new Padding(4);
             TbcSamePic.Name = "TbcSamePic";
-            TbcSamePic.Padding = new Padding(3);
-            TbcSamePic.Size = new Size(352, 373);
+            TbcSamePic.Padding = new Padding(4);
+            TbcSamePic.Size = new Size(455, 500);
             TbcSamePic.TabIndex = 0;
             TbcSamePic.Text = "TbcSamePic";
             TbcSamePic.UseVisualStyleBackColor = true;
             // 
-            // BtnPicServer
+            // TlpSamePic
             // 
-            BtnPicServer.Location = new Point(6, 6);
-            BtnPicServer.Name = "BtnPicServer";
-            BtnPicServer.Size = new Size(100, 40);
-            BtnPicServer.TabIndex = 1;
-            BtnPicServer.Text = "서버1";
-            BtnPicServer.UseVisualStyleBackColor = true;
-            BtnPicServer.Click += BtnPicServer_Click;
+            TlpSamePic.ColumnCount = 1;
+            TlpSamePic.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            TlpSamePic.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            TlpSamePic.Location = new Point(7, 7);
+            TlpSamePic.Name = "TlpSamePic";
+            TlpSamePic.RowCount = 1;
+            TlpSamePic.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            TlpSamePic.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            TlpSamePic.Size = new Size(441, 406);
+            TlpSamePic.TabIndex = 2;
             // 
             // BtnBefore2
             // 
-            BtnBefore2.Location = new Point(123, 317);
+            BtnBefore2.Location = new Point(158, 423);
+            BtnBefore2.Margin = new Padding(4);
             BtnBefore2.Name = "BtnBefore2";
-            BtnBefore2.Size = new Size(100, 40);
+            BtnBefore2.Size = new Size(129, 53);
             BtnBefore2.TabIndex = 0;
             BtnBefore2.Text = "이전화면";
             BtnBefore2.UseVisualStyleBackColor = true;
@@ -100,31 +106,36 @@
             // 
             // TbcBingo
             // 
-            TbcBingo.Controls.Add(BtnbingoServer);
+            TbcBingo.Controls.Add(TlpBingo);
             TbcBingo.Controls.Add(BtnBefore3);
             TbcBingo.Location = new Point(4, 5);
+            TbcBingo.Margin = new Padding(4);
             TbcBingo.Name = "TbcBingo";
-            TbcBingo.Padding = new Padding(3);
-            TbcBingo.Size = new Size(352, 373);
+            TbcBingo.Padding = new Padding(4);
+            TbcBingo.Size = new Size(455, 500);
             TbcBingo.TabIndex = 1;
             TbcBingo.Text = "Tbcbingo";
             TbcBingo.UseVisualStyleBackColor = true;
             // 
-            // BtnbingoServer
+            // TlpBingo
             // 
-            BtnbingoServer.Location = new Point(6, 6);
-            BtnbingoServer.Name = "BtnbingoServer";
-            BtnbingoServer.Size = new Size(100, 40);
-            BtnbingoServer.TabIndex = 3;
-            BtnbingoServer.Text = "서버1";
-            BtnbingoServer.UseVisualStyleBackColor = true;
-            BtnbingoServer.Click += BtnbingoServer_Click;
+            TlpBingo.ColumnCount = 1;
+            TlpBingo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            TlpBingo.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            TlpBingo.Location = new Point(7, 7);
+            TlpBingo.Name = "TlpBingo";
+            TlpBingo.RowCount = 1;
+            TlpBingo.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            TlpBingo.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            TlpBingo.Size = new Size(441, 409);
+            TlpBingo.TabIndex = 3;
             // 
             // BtnBefore3
             // 
-            BtnBefore3.Location = new Point(123, 317);
+            BtnBefore3.Location = new Point(158, 423);
+            BtnBefore3.Margin = new Padding(4);
             BtnBefore3.Name = "BtnBefore3";
-            BtnBefore3.Size = new Size(100, 40);
+            BtnBefore3.Size = new Size(129, 53);
             BtnBefore3.TabIndex = 2;
             BtnBefore3.Text = "이전화면";
             BtnBefore3.UseVisualStyleBackColor = true;
@@ -132,31 +143,36 @@
             // 
             // TbcTeris
             // 
-            TbcTeris.Controls.Add(BtnTetrisServer);
+            TbcTeris.Controls.Add(TlpTetris);
             TbcTeris.Controls.Add(BtnBefore4);
             TbcTeris.Location = new Point(4, 5);
+            TbcTeris.Margin = new Padding(4);
             TbcTeris.Name = "TbcTeris";
-            TbcTeris.Padding = new Padding(3);
-            TbcTeris.Size = new Size(352, 373);
+            TbcTeris.Padding = new Padding(4);
+            TbcTeris.Size = new Size(455, 500);
             TbcTeris.TabIndex = 2;
             TbcTeris.Text = "TbcTetris";
             TbcTeris.UseVisualStyleBackColor = true;
             // 
-            // BtnTetrisServer
+            // TlpTetris
             // 
-            BtnTetrisServer.Location = new Point(6, 6);
-            BtnTetrisServer.Name = "BtnTetrisServer";
-            BtnTetrisServer.Size = new Size(100, 40);
-            BtnTetrisServer.TabIndex = 5;
-            BtnTetrisServer.Text = "서버1";
-            BtnTetrisServer.UseVisualStyleBackColor = true;
-            BtnTetrisServer.Click += BtnTetrisServer_Click;
+            TlpTetris.ColumnCount = 1;
+            TlpTetris.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            TlpTetris.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            TlpTetris.Location = new Point(7, 7);
+            TlpTetris.Name = "TlpTetris";
+            TlpTetris.RowCount = 1;
+            TlpTetris.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            TlpTetris.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            TlpTetris.Size = new Size(441, 409);
+            TlpTetris.TabIndex = 5;
             // 
             // BtnBefore4
             // 
-            BtnBefore4.Location = new Point(123, 317);
+            BtnBefore4.Location = new Point(158, 423);
+            BtnBefore4.Margin = new Padding(4);
             BtnBefore4.Name = "BtnBefore4";
-            BtnBefore4.Size = new Size(100, 40);
+            BtnBefore4.Size = new Size(129, 53);
             BtnBefore4.TabIndex = 4;
             BtnBefore4.Text = "이전화면";
             BtnBefore4.UseVisualStyleBackColor = true;
@@ -165,9 +181,10 @@
             // tabPage4
             // 
             tabPage4.Location = new Point(4, 5);
+            tabPage4.Margin = new Padding(4);
             tabPage4.Name = "tabPage4";
-            tabPage4.Padding = new Padding(3);
-            tabPage4.Size = new Size(352, 373);
+            tabPage4.Padding = new Padding(4);
+            tabPage4.Size = new Size(455, 500);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "tabPage4";
             tabPage4.UseVisualStyleBackColor = true;
@@ -177,17 +194,19 @@
             LblGameName.Dock = DockStyle.Top;
             LblGameName.Font = new Font("맑은 고딕", 30F, FontStyle.Bold);
             LblGameName.Location = new Point(0, 0);
+            LblGameName.Margin = new Padding(4, 0, 4, 0);
             LblGameName.Name = "LblGameName";
-            LblGameName.Size = new Size(384, 54);
+            LblGameName.Size = new Size(494, 72);
             LblGameName.TabIndex = 1;
             LblGameName.Text = "게임선택화면";
             LblGameName.TextAlign = ContentAlignment.TopCenter;
             // 
             // BtnSamePic
             // 
-            BtnSamePic.Location = new Point(139, 121);
+            BtnSamePic.Location = new Point(179, 161);
+            BtnSamePic.Margin = new Padding(4);
             BtnSamePic.Name = "BtnSamePic";
-            BtnSamePic.Size = new Size(100, 40);
+            BtnSamePic.Size = new Size(129, 53);
             BtnSamePic.TabIndex = 1;
             BtnSamePic.Text = "같은그림찾기";
             BtnSamePic.UseVisualStyleBackColor = true;
@@ -195,9 +214,10 @@
             // 
             // BtnBingo
             // 
-            BtnBingo.Location = new Point(139, 188);
+            BtnBingo.Location = new Point(179, 251);
+            BtnBingo.Margin = new Padding(4);
             BtnBingo.Name = "BtnBingo";
-            BtnBingo.Size = new Size(100, 40);
+            BtnBingo.Size = new Size(129, 53);
             BtnBingo.TabIndex = 2;
             BtnBingo.Text = "빙고";
             BtnBingo.UseVisualStyleBackColor = true;
@@ -205,9 +225,10 @@
             // 
             // BtnTetris
             // 
-            BtnTetris.Location = new Point(139, 255);
+            BtnTetris.Location = new Point(179, 340);
+            BtnTetris.Margin = new Padding(4);
             BtnTetris.Name = "BtnTetris";
-            BtnTetris.Size = new Size(100, 40);
+            BtnTetris.Size = new Size(129, 53);
             BtnTetris.TabIndex = 3;
             BtnTetris.Text = "테트리스";
             BtnTetris.UseVisualStyleBackColor = true;
@@ -215,18 +236,20 @@
             // 
             // button3
             // 
-            button3.Location = new Point(139, 322);
+            button3.Location = new Point(179, 429);
+            button3.Margin = new Padding(4);
             button3.Name = "button3";
-            button3.Size = new Size(100, 40);
+            button3.Size = new Size(129, 53);
             button3.TabIndex = 4;
             button3.Text = "빈버튼";
             button3.UseVisualStyleBackColor = true;
             // 
             // BtnBefore
             // 
-            BtnBefore.Location = new Point(139, 389);
+            BtnBefore.Location = new Point(179, 519);
+            BtnBefore.Margin = new Padding(4);
             BtnBefore.Name = "BtnBefore";
-            BtnBefore.Size = new Size(100, 40);
+            BtnBefore.Size = new Size(129, 53);
             BtnBefore.TabIndex = 5;
             BtnBefore.Text = "이전화면";
             BtnBefore.UseVisualStyleBackColor = true;
@@ -234,9 +257,9 @@
             // 
             // WallPaper
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(384, 461);
+            ClientSize = new Size(494, 615);
             Controls.Add(TabControl1);
             Controls.Add(BtnBefore);
             Controls.Add(button3);
@@ -245,6 +268,7 @@
             Controls.Add(BtnSamePic);
             Controls.Add(LblGameName);
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            Margin = new Padding(4);
             MaximizeBox = false;
             Name = "WallPaper";
             StartPosition = FormStartPosition.CenterScreen;
@@ -272,10 +296,10 @@
         private Button button3;
         private Button BtnBefore;
         private Button BtnBefore2;
-        private Button BtnPicServer;
-        private Button BtnbingoServer;
         private Button BtnBefore3;
-        private Button BtnTetrisServer;
         private Button BtnBefore4;
+        private TableLayoutPanel TlpSamePic;
+        private TableLayoutPanel TlpBingo;
+        private TableLayoutPanel TlpTetris;
     }
 }

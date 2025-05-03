@@ -12,8 +12,13 @@ namespace toyproject
 {
     public partial class Tetris : Form
     {
-        public Tetris()
+        static User user = Program.user;
+        string user_name = user.User_Name();
+        string Ch_name = "";
+
+        public Tetris(string BtnName)
         {
+            Ch_name = BtnName;
             InitializeComponent();
         }
 

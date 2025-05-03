@@ -31,8 +31,9 @@
             TlpBingo = new TableLayoutPanel();
             panel1 = new Panel();
             label1 = new Label();
-            textBox1 = new TextBox();
-            button1 = new Button();
+            BtnSend = new Button();
+            TxtSend = new TextBox();
+            TxtChannel = new RichTextBox();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -40,21 +41,23 @@
             // 
             TlpBingo.ColumnCount = 1;
             TlpBingo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            TlpBingo.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-            TlpBingo.Location = new Point(12, 99);
+            TlpBingo.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 26F));
+            TlpBingo.Location = new Point(15, 132);
+            TlpBingo.Margin = new Padding(4);
             TlpBingo.Name = "TlpBingo";
             TlpBingo.RowCount = 1;
             TlpBingo.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            TlpBingo.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            TlpBingo.Size = new Size(500, 350);
+            TlpBingo.RowStyles.Add(new RowStyle(SizeType.Absolute, 467F));
+            TlpBingo.Size = new Size(643, 467);
             TlpBingo.TabIndex = 0;
             // 
             // panel1
             // 
             panel1.Controls.Add(label1);
-            panel1.Location = new Point(12, 12);
+            panel1.Location = new Point(15, 16);
+            panel1.Margin = new Padding(4);
             panel1.Name = "panel1";
-            panel1.Size = new Size(500, 58);
+            panel1.Size = new Size(643, 77);
             panel1.TabIndex = 4;
             // 
             // label1
@@ -62,43 +65,57 @@
             label1.Dock = DockStyle.Top;
             label1.Font = new Font("맑은 고딕", 30F, FontStyle.Bold);
             label1.Location = new Point(0, 0);
+            label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(500, 58);
+            label1.Size = new Size(643, 77);
             label1.TabIndex = 0;
             label1.Text = "빙 고";
             label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // textBox1
+            // BtnSend
             // 
-            textBox1.BackColor = Color.White;
-            textBox1.Enabled = false;
-            textBox1.Location = new Point(518, 12);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.ReadOnly = true;
-            textBox1.ScrollBars = ScrollBars.Both;
-            textBox1.Size = new Size(254, 391);
-            textBox1.TabIndex = 6;
-            textBox1.TabStop = false;
+            BtnSend.Location = new Point(900, 565);
+            BtnSend.Margin = new Padding(4);
+            BtnSend.Name = "BtnSend";
+            BtnSend.Size = new Size(95, 34);
+            BtnSend.TabIndex = 5;
+            BtnSend.Text = "전송";
+            BtnSend.UseVisualStyleBackColor = true;
+            BtnSend.Click += BtnSend_Click;
             // 
-            // button1
+            // TxtSend
             // 
-            button1.Location = new Point(518, 409);
-            button1.Name = "button1";
-            button1.Size = new Size(254, 40);
-            button1.TabIndex = 5;
-            button1.Text = "button1";
-            button1.UseVisualStyleBackColor = true;
+            TxtSend.Font = new Font("맑은 고딕", 12F);
+            TxtSend.Location = new Point(665, 565);
+            TxtSend.Name = "TxtSend";
+            TxtSend.Size = new Size(228, 34);
+            TxtSend.TabIndex = 7;
+            TxtSend.KeyDown += TxtSend_KeyDown;
+            // 
+            // TxtChannel
+            // 
+            TxtChannel.BackColor = Color.White;
+            TxtChannel.BorderStyle = BorderStyle.FixedSingle;
+            TxtChannel.Location = new Point(665, 16);
+            TxtChannel.Name = "TxtChannel";
+            TxtChannel.ReadOnly = true;
+            TxtChannel.ScrollBars = RichTextBoxScrollBars.Vertical;
+            TxtChannel.Size = new Size(331, 542);
+            TxtChannel.TabIndex = 8;
+            TxtChannel.TabStop = false;
+            TxtChannel.Text = "";
             // 
             // Bingo
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(784, 461);
-            Controls.Add(textBox1);
-            Controls.Add(button1);
+            ClientSize = new Size(1008, 615);
+            Controls.Add(TxtChannel);
+            Controls.Add(TxtSend);
+            Controls.Add(BtnSend);
             Controls.Add(panel1);
             Controls.Add(TlpBingo);
+            Margin = new Padding(4);
             Name = "Bingo";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Bingo";
@@ -114,7 +131,8 @@
         private TableLayoutPanel TlpBingo;
         private Panel panel1;
         private Label label1;
-        private TextBox textBox1;
-        private Button button1;
+        private Button BtnSend;
+        private TextBox TxtSend;
+        private RichTextBox TxtChannel;
     }
 }

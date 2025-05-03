@@ -31,10 +31,11 @@
             components = new System.ComponentModel.Container();
             ImlCatchImg = new ImageList(components);
             TlpSamePic = new TableLayoutPanel();
-            button1 = new Button();
             panel1 = new Panel();
             label1 = new Label();
-            textBox1 = new TextBox();
+            TxtChannel = new RichTextBox();
+            TxtSend = new TextBox();
+            BtnSend = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -48,31 +49,23 @@
             // 
             TlpSamePic.ColumnCount = 1;
             TlpSamePic.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            TlpSamePic.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-            TlpSamePic.Location = new Point(12, 99);
+            TlpSamePic.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 26F));
+            TlpSamePic.Location = new Point(15, 132);
+            TlpSamePic.Margin = new Padding(4);
             TlpSamePic.Name = "TlpSamePic";
             TlpSamePic.RowCount = 1;
             TlpSamePic.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            TlpSamePic.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            TlpSamePic.Size = new Size(500, 350);
+            TlpSamePic.RowStyles.Add(new RowStyle(SizeType.Absolute, 467F));
+            TlpSamePic.Size = new Size(643, 467);
             TlpSamePic.TabIndex = 0;
-            // 
-            // button1
-            // 
-            button1.ImageList = ImlCatchImg;
-            button1.Location = new Point(518, 409);
-            button1.Name = "button1";
-            button1.Size = new Size(254, 40);
-            button1.TabIndex = 1;
-            button1.Text = "button1";
-            button1.UseVisualStyleBackColor = true;
             // 
             // panel1
             // 
             panel1.Controls.Add(label1);
-            panel1.Location = new Point(12, 12);
+            panel1.Location = new Point(15, 16);
+            panel1.Margin = new Padding(4);
             panel1.Name = "panel1";
-            panel1.Size = new Size(500, 58);
+            panel1.Size = new Size(643, 77);
             panel1.TabIndex = 3;
             // 
             // label1
@@ -80,34 +73,57 @@
             label1.Dock = DockStyle.Top;
             label1.Font = new Font("맑은 고딕", 30F, FontStyle.Bold);
             label1.Location = new Point(0, 0);
+            label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(500, 58);
+            label1.Size = new Size(643, 77);
             label1.TabIndex = 0;
             label1.Text = "같 은 그 림 찾 기";
             label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // textBox1
+            // TxtChannel
             // 
-            textBox1.BackColor = Color.White;
-            textBox1.Enabled = false;
-            textBox1.Location = new Point(518, 12);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.ReadOnly = true;
-            textBox1.ScrollBars = ScrollBars.Both;
-            textBox1.Size = new Size(254, 391);
-            textBox1.TabIndex = 4;
-            textBox1.TabStop = false;
+            TxtChannel.BackColor = Color.White;
+            TxtChannel.BorderStyle = BorderStyle.FixedSingle;
+            TxtChannel.Location = new Point(665, 16);
+            TxtChannel.Name = "TxtChannel";
+            TxtChannel.ReadOnly = true;
+            TxtChannel.ScrollBars = RichTextBoxScrollBars.Vertical;
+            TxtChannel.Size = new Size(331, 542);
+            TxtChannel.TabIndex = 11;
+            TxtChannel.TabStop = false;
+            TxtChannel.Text = "";
+            // 
+            // TxtSend
+            // 
+            TxtSend.Font = new Font("맑은 고딕", 12F);
+            TxtSend.Location = new Point(665, 565);
+            TxtSend.Name = "TxtSend";
+            TxtSend.Size = new Size(228, 34);
+            TxtSend.TabIndex = 10;
+            TxtSend.KeyDown += TxtSend_KeyDown;
+            // 
+            // BtnSend
+            // 
+            BtnSend.Location = new Point(900, 565);
+            BtnSend.Margin = new Padding(4);
+            BtnSend.Name = "BtnSend";
+            BtnSend.Size = new Size(95, 34);
+            BtnSend.TabIndex = 9;
+            BtnSend.Text = "전송";
+            BtnSend.UseVisualStyleBackColor = true;
+            BtnSend.Click += BtnSend_Click;
             // 
             // SamePicture
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(784, 461);
-            Controls.Add(textBox1);
+            ClientSize = new Size(1008, 615);
+            Controls.Add(TxtChannel);
+            Controls.Add(TxtSend);
+            Controls.Add(BtnSend);
             Controls.Add(panel1);
-            Controls.Add(button1);
             Controls.Add(TlpSamePic);
+            Margin = new Padding(4);
             Name = "SamePicture";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "SamePicture";
@@ -122,9 +138,10 @@
 
         private ImageList ImlCatchImg;
         private TableLayoutPanel TlpSamePic;
-        private Button button1;
         private Panel panel1;
         private Label label1;
-        private TextBox textBox1;
+        private RichTextBox TxtChannel;
+        private TextBox TxtSend;
+        private Button BtnSend;
     }
 }

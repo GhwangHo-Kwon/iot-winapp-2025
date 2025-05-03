@@ -17,14 +17,22 @@ namespace toyproject
         private List<List<int>> imgIndex = new List<List<int>>();
         Button BtnFirst = null;
         Button BtnSecond = null;
-        public SamePicture()
+
+        static User user = Program.user;
+        string user_name = user.User_Name();
+        string Ch_name = "";
+
+        public SamePicture(string BtnName)
         {
+            Ch_name = BtnName;
             InitializeComponent();
         }
 
         private void SamePicture_Load(object sender, EventArgs e)
         {
             Set_Table_Layout(4, 4);
+            Chat_room();
+
             for (int i = 0; i < imgButtons.Count; i++)
             {
                 for (int j = 0; j < imgButtons[i].Count; j++)
@@ -32,6 +40,77 @@ namespace toyproject
                     imgButtons[i][j].Click += Img_Click;
                 }
             }
+        }
+
+        private void Chat_room()
+        {
+            try
+            {
+                var db = RedisConn.RedisDB;
+
+                db.Multiplexer.GetSubscriber().Subscribe(Ch_name, (channel, message) =>
+                {
+                    Add_message(message);
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Redis Connection test failed: {ex.Message}");
+            }
+        }
+
+        private void Add_message(string message)
+        {
+            TxtChannel.SelectionStart = TxtChannel.TextLength;
+            TxtChannel.SelectionLength = 0;
+
+            string txt_parse = message.Split(' ')[0];
+
+            if (txt_parse == user_name)
+            {
+                TxtChannel.SelectionAlignment = HorizontalAlignment.Right;
+            }
+            else
+            {
+                TxtChannel.SelectionAlignment = HorizontalAlignment.Left;
+            }
+
+            TxtChannel.AppendText(message + Environment.NewLine);
+
+            TxtChannel.ScrollToCaret();
+        }
+
+        private void BtnSend_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var db = RedisConn.RedisDB;
+
+                string txt_parse = user_name + " " + TxtSend.Text + Time_Table();
+                db.Publish(Ch_name, txt_parse);
+                TxtSend.Text = "";
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Redis Connection test failed: {ex.Message}");
+            }
+        }
+
+        private void TxtSend_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                BtnSend_Click(sender, e);
+            }
+        }
+
+        private string Time_Table()
+        {
+            DateTime time = DateTime.Now;
+            string timetable = time.ToString(" tt h:mm");
+
+            return timetable;
         }
 
         private void SamePicture_FormClosing(object sender, FormClosingEventArgs e)
