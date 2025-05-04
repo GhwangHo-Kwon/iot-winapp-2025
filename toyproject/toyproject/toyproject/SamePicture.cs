@@ -30,16 +30,21 @@ namespace toyproject
 
         private void SamePicture_Load(object sender, EventArgs e)
         {
+            var t = new System.Windows.Forms.Timer();
+
             Set_Table_Layout(4, 4);
             Chat_room();
+            Sys_Conn();
 
-            for (int i = 0; i < imgButtons.Count; i++)
+            t.Interval = 500;
+            t.Tick += (s, args) =>
             {
-                for (int j = 0; j < imgButtons[i].Count; j++)
-                {
-                    imgButtons[i][j].Click += Img_Click;
-                }
-            }
+                First_Conn();
+
+                t.Stop();
+                t.Dispose();
+            };
+            t.Start();
         }
 
         private void Chat_room()
@@ -59,16 +64,35 @@ namespace toyproject
             }
         }
 
+        private void First_Conn()
+        {
+            try
+            {
+                var db = RedisConn.RedisDB;
+
+                string txt_parse = user_name + "님이 들어오셨습니다!" + Time_Table();
+                db.Publish(Ch_name, txt_parse);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Redis Connection test failed: {ex.Message}");
+            }
+        }
+
         private void Add_message(string message)
         {
             TxtChannel.SelectionStart = TxtChannel.TextLength;
             TxtChannel.SelectionLength = 0;
 
-            string txt_parse = message.Split(' ')[0];
+            string[] txt_parse = message.Split(' ');
 
-            if (txt_parse == user_name)
+            if (txt_parse[0] == user_name)
             {
                 TxtChannel.SelectionAlignment = HorizontalAlignment.Right;
+            }
+            else if (txt_parse[1] == "들어오셨습니다!")
+            {
+                TxtChannel.SelectionAlignment = HorizontalAlignment.Center;
             }
             else
             {
@@ -179,6 +203,8 @@ namespace toyproject
                     imgButtons[i][j].ImageList = ImlCatchImg;
                     imgButtons[i][j].Name = $"{i} {j}";
                     imgButtons[i][j].Dock = DockStyle.Fill;
+                    imgButtons[i][j].Click += Img_Click;
+
                     TlpSamePic.Controls.Add(imgButtons[i][j], j, i);
                 }
             }
@@ -255,6 +281,41 @@ namespace toyproject
                     };
                     t.Start();
                 }
+            }
+        }
+
+        private string Sys_Conn()
+        {
+            string sys_data = "";
+            try
+            {
+                var db = RedisConn.RedisDB;
+                string sys_name = "Sys" + Ch_name;
+
+                db.Multiplexer.GetSubscriber().Subscribe(sys_name, (channel, message) =>
+                {
+                    sys_data = message;
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Redis Connection test failed: {ex.Message}");
+            }
+            return sys_data;
+        }
+
+        private void Sys_Send(string sys_cmd)
+        {
+            try
+            {
+                var db = RedisConn.RedisDB;
+                string sys_name = "Sys" + Ch_name;
+
+                db.Publish(sys_name, sys_cmd);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Redis Connection test failed: {ex.Message}");
             }
         }
     }

@@ -25,8 +25,20 @@ namespace toyproject
 
         private void Bingo_Load(object sender, EventArgs e)
         {
+            //TxtCmd.Hide();
+            var t = new System.Windows.Forms.Timer();
+
             Set_Table_Layout(5, 5);
             Chat_room();
+
+            t.Interval = 500;
+            t.Tick += (s, args) =>
+            {
+                First_Conn();
+                t.Stop();
+                t.Dispose();
+            };
+            t.Start();
         }
 
         private void Chat_room()
@@ -34,6 +46,7 @@ namespace toyproject
             try
             {
                 var db = RedisConn.RedisDB;
+                Sys_Conn();
 
                 db.Multiplexer.GetSubscriber().Subscribe(Ch_name, (channel, message) =>
                 {
@@ -46,18 +59,43 @@ namespace toyproject
             }
         }
 
+        private void First_Conn()
+        {
+            try
+            {
+                var db = RedisConn.RedisDB;
+
+                string sys_name = "Sys" + Ch_name;
+                string txt_parse = user_name + "님이 들어오셨습니다!" + Time_Table();
+
+                db.Publish(Ch_name, txt_parse);
+
+                db.Publish(sys_name, user_name);
+
+                Sys_into();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Redis Connection test failed: {ex.Message}");
+            }            
+        }
+
         private void Add_message(string message)
         {
             TxtChannel.SelectionStart = TxtChannel.TextLength;
             TxtChannel.SelectionLength = 0;
 
-            string txt_parse = message.Split(' ')[0];
+            string[] txt_parse = message.Split(' ');
 
-            if (txt_parse == user_name)
+            if (txt_parse[0] == user_name)
             {
                 TxtChannel.SelectionAlignment = HorizontalAlignment.Right;
             }
-            else
+            else if (txt_parse[1] == "들어오셨습니다!")
+            {
+                TxtChannel.SelectionAlignment = HorizontalAlignment.Center;
+            }
+            else 
             {
                 TxtChannel.SelectionAlignment = HorizontalAlignment.Left;
             }
@@ -253,6 +291,53 @@ namespace toyproject
             }
 
             return array;
+        }
+
+        private void Sys_Conn()
+        {
+            TxtCmd.Text = "";
+            try
+            {
+                var db = RedisConn.RedisDB;
+                string sys_name = "Sys" + Ch_name;
+
+                db.Multiplexer.GetSubscriber().Subscribe(sys_name, (channel, message) =>
+                {
+                    TxtCmd.Text = message;
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Redis Connection test failed: {ex.Message}");
+            }
+        }
+
+        private void Sys_into()
+        {
+            while (true)
+            {
+                if ( TxtCmd.Text != "")
+                {
+                    Label lbl = new Label();
+                    lbl.Text = TxtCmd.Text;
+                    lbl.Tag = TxtCmd.Text;
+                    FlpParticipant.Controls.Add(lbl);
+                    TxtCmd.Text = "";
+                    break;
+                }
+            }
+        }
+
+        private void Sys_exit(string exit_name)
+        {
+            foreach (Control ctrl in FlpParticipant.Controls)
+            {
+                if (ctrl is Label name && name.Tag?.ToString() == exit_name)
+                {
+                    FlpParticipant.Controls.Remove(name);
+                    break;
+                }
+            }
         }
     }
 }
