@@ -32,22 +32,24 @@ namespace toyproject
 
         public static IDatabase RedisDB => Connection.GetDatabase();
 
-        public static void TestConnection()
+        public static long Sub_Count(string Ch_name)
         {
-            //try
-            //{
-            //    var db = RedisConn.RedisDB;
-            //    db.Multiplexer.GetSubscriber().Subscribe("BingoCh:1", (channel, message) =>
-            //    {
-                    
-            //    });
-            //    db.Publish("BingoCh:1", "Hi");
+            try
+            {
+                var db = RedisConn.RedisDB;
 
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine($"Redis Connection test failed: {ex.Message}");
-            //}
+                RedisResult result = db.Execute("PUBSUB", "NUMSUB", Ch_name);
+
+                var arr = (RedisResult[])result;
+                var subcnt = (long)arr[1];
+
+                return subcnt;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Redis pubsub err : {ex}");
+            }
+            return 0;
         }
     }
 }

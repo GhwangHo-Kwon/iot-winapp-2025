@@ -38,8 +38,12 @@
             panel2 = new Panel();
             label2 = new Label();
             FlpParticipant = new FlowLayoutPanel();
+            FlpStatus = new FlowLayoutPanel();
+            BtnStart = new Button();
+            ChkBoss = new CheckBox();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
+            FlpStatus.SuspendLayout();
             SuspendLayout();
             // 
             // TlpBingo
@@ -113,7 +117,7 @@
             TxtChannel.Name = "TxtChannel";
             TxtChannel.ReadOnly = true;
             TxtChannel.ScrollBars = RichTextBoxScrollBars.Vertical;
-            TxtChannel.Size = new Size(258, 408);
+            TxtChannel.Size = new Size(258, 377);
             TxtChannel.TabIndex = 8;
             TxtChannel.TabStop = false;
             TxtChannel.Text = "";
@@ -146,11 +150,44 @@
             FlpParticipant.Size = new Size(142, 395);
             FlpParticipant.TabIndex = 11;
             // 
+            // FlpStatus
+            // 
+            FlpStatus.Controls.Add(BtnStart);
+            FlpStatus.Controls.Add(ChkBoss);
+            FlpStatus.FlowDirection = FlowDirection.RightToLeft;
+            FlpStatus.Location = new Point(520, 388);
+            FlpStatus.Name = "FlpStatus";
+            FlpStatus.Size = new Size(257, 34);
+            FlpStatus.TabIndex = 12;
+            // 
+            // BtnStart
+            // 
+            BtnStart.Anchor = AnchorStyles.Right;
+            BtnStart.Location = new Point(179, 3);
+            BtnStart.Name = "BtnStart";
+            BtnStart.Size = new Size(75, 28);
+            BtnStart.TabIndex = 0;
+            BtnStart.Text = "시작";
+            BtnStart.UseVisualStyleBackColor = true;
+            BtnStart.Click += BtnStart_Click;
+            // 
+            // ChkBoss
+            // 
+            ChkBoss.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            ChkBoss.Enabled = false;
+            ChkBoss.Location = new Point(123, 7);
+            ChkBoss.Name = "ChkBoss";
+            ChkBoss.Size = new Size(50, 20);
+            ChkBoss.TabIndex = 0;
+            ChkBoss.Text = "방장";
+            ChkBoss.UseVisualStyleBackColor = true;
+            // 
             // Bingo
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(934, 461);
+            Controls.Add(FlpStatus);
             Controls.Add(FlpParticipant);
             Controls.Add(panel2);
             Controls.Add(TxtChannel);
@@ -166,6 +203,7 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             panel2.ResumeLayout(false);
+            FlpStatus.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -182,5 +220,8 @@
         private Label label2;
         private FlowLayoutPanel FlpParticipant;
         private TextBox TxtCmd;
+        private FlowLayoutPanel FlpStatus;
+        private Button BtnStart;
+        private CheckBox ChkBoss;
     }
 }

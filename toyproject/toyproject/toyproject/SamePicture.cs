@@ -22,6 +22,8 @@ namespace toyproject
         string user_name = user.User_Name();
         string Ch_name = "";
 
+        long user_num = 0;
+
         public SamePicture(string BtnName)
         {
             Ch_name = BtnName;
@@ -30,21 +32,64 @@ namespace toyproject
 
         private void SamePicture_Load(object sender, EventArgs e)
         {
-            var t = new System.Windows.Forms.Timer();
+            Task.Run(() => Chat_room());
 
-            Set_Table_Layout(4, 4);
-            Chat_room();
-            Sys_Conn();
-
-            t.Interval = 500;
-            t.Tick += (s, args) =>
+            Task.Run(() =>
             {
-                First_Conn();
+                while (true)
+                {
+                    try
+                    {
+                        Sys_Cmd();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Sys_Cmd 에러 : {ex.Message}");
+                    }
+                }
+            });
 
-                t.Stop();
-                t.Dispose();
-            };
-            t.Start();
+            Room_Into();
+            First_Into();
+        }
+
+        private void BtnStart_Click(object sender, EventArgs e)
+        {
+            if (ChkBoss.Checked == true)
+            {
+                try
+                {
+                    var db = RedisConn.RedisDB;
+
+                    string sys_name = "Sys" + Ch_name;
+                    string sys_into = "Sys:Start " + "게임시작";
+
+                    db.Publish(sys_name, sys_into);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("시작하지 못했습니다!\r\n다시 눌러주세요!", "시작실패", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Console.WriteLine($"Redis Connection test failed: {ex.Message}");
+                }
+            }
+        }
+
+        private void First_Into()
+        {
+            try
+            {
+                long subcnt = RedisConn.Sub_Count(Ch_name);
+
+                if (subcnt <= 1)
+                {
+                    ChkBoss.Checked = true;
+                    Console.WriteLine("방장입니다.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Redis pubsub err : {ex}");
+            }
         }
 
         private void Chat_room()
@@ -52,6 +97,7 @@ namespace toyproject
             try
             {
                 var db = RedisConn.RedisDB;
+                Sys_Conn();
 
                 db.Multiplexer.GetSubscriber().Subscribe(Ch_name, (channel, message) =>
                 {
@@ -64,13 +110,19 @@ namespace toyproject
             }
         }
 
-        private void First_Conn()
+        private void Room_Into()
         {
             try
             {
                 var db = RedisConn.RedisDB;
 
+                string sys_name = "Sys" + Ch_name;
+                string sys_into = "Sys:Into " + user_name;
+
                 string txt_parse = user_name + "님이 들어오셨습니다!" + Time_Table();
+
+                db.Publish(sys_name, sys_into);
+
                 db.Publish(Ch_name, txt_parse);
             }
             catch (Exception ex)
@@ -81,6 +133,12 @@ namespace toyproject
 
         private void Add_message(string message)
         {
+            if (TxtChannel.InvokeRequired)
+            {
+                TxtChannel.Invoke((MethodInvoker)(() => Add_message(message)));
+                return;
+            }
+
             TxtChannel.SelectionStart = TxtChannel.TextLength;
             TxtChannel.SelectionLength = 0;
 
@@ -139,6 +197,14 @@ namespace toyproject
 
         private void SamePicture_FormClosing(object sender, FormClosingEventArgs e)
         {
+            var db = RedisConn.RedisDB;
+
+            string sys_name = "Sys" + Ch_name;
+            string sys_exit = "Sys:Exit " + user_name;
+            db.Publish(sys_name, sys_exit);
+
+            Thread.Sleep(100);
+
             WallPaper main = new WallPaper();
             main.Show();
         }
@@ -284,9 +350,9 @@ namespace toyproject
             }
         }
 
-        private string Sys_Conn()
+        private void Sys_Conn()
         {
-            string sys_data = "";
+            TxtCmd.Text = "";
             try
             {
                 var db = RedisConn.RedisDB;
@@ -294,28 +360,69 @@ namespace toyproject
 
                 db.Multiplexer.GetSubscriber().Subscribe(sys_name, (channel, message) =>
                 {
-                    sys_data = message;
+                    TxtCmd.Text = message;
                 });
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Redis Connection test failed: {ex.Message}");
             }
-            return sys_data;
         }
 
-        private void Sys_Send(string sys_cmd)
+        private void Sys_Cmd()
         {
-            try
+            Thread.Sleep(100);
+            if (TxtCmd.InvokeRequired)
             {
-                var db = RedisConn.RedisDB;
-                string sys_name = "Sys" + Ch_name;
-
-                db.Publish(sys_name, sys_cmd);
+                TxtCmd.Invoke(new MethodInvoker(Sys_Cmd));
+                return;
             }
-            catch (Exception ex)
+
+            string cmd = TxtCmd.Text;
+            TxtCmd.Text = "";
+
+            if (!string.IsNullOrEmpty(cmd))
             {
-                Console.WriteLine($"Redis Connection test failed: {ex.Message}");
+                string[] parse_cmd = cmd.Split(' ');
+
+                if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Into")
+                {
+                    Sys_Into(parse_cmd[1]);
+                }
+                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Exit")
+                {
+                    Sys_Exit(parse_cmd[1]);
+                }
+                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Start")
+                {
+                    Set_Table_Layout(4, 4);
+                    user_num = RedisConn.Sub_Count(Ch_name);
+                }
+            }
+        }
+
+        private void Sys_Into(string name)
+        {
+            Label lbl = new Label();
+            Font font = new Font("NanumGothic", 16);
+
+            lbl.Text = name;
+            lbl.Tag = name;
+            lbl.Font = font;
+            lbl.AutoSize = true;
+
+            FlpParticipant.Controls.Add(lbl);
+        }
+
+        private void Sys_Exit(string exit_name)
+        {
+            foreach (Control ctrl in FlpParticipant.Controls)
+            {
+                if (ctrl is Label name && name.Tag?.ToString() == exit_name)
+                {
+                    FlpParticipant.Controls.Remove(name);
+                    break;
+                }
             }
         }
     }
