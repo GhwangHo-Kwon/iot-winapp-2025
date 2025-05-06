@@ -30,7 +30,6 @@
         {
             TlpBingo = new TableLayoutPanel();
             panel1 = new Panel();
-            TxtCmd = new TextBox();
             label1 = new Label();
             BtnSend = new Button();
             TxtSend = new TextBox();
@@ -61,21 +60,11 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(TxtCmd);
             panel1.Controls.Add(label1);
             panel1.Location = new Point(12, 12);
             panel1.Name = "panel1";
             panel1.Size = new Size(500, 58);
             panel1.TabIndex = 4;
-            // 
-            // TxtCmd
-            // 
-            TxtCmd.BorderStyle = BorderStyle.FixedSingle;
-            TxtCmd.Location = new Point(0, -1);
-            TxtCmd.Name = "TxtCmd";
-            TxtCmd.Size = new Size(100, 23);
-            TxtCmd.TabIndex = 12;
-            TxtCmd.Visible = false;
             // 
             // label1
             // 
@@ -163,6 +152,7 @@
             // BtnStart
             // 
             BtnStart.Anchor = AnchorStyles.Right;
+            BtnStart.Enabled = false;
             BtnStart.Location = new Point(179, 3);
             BtnStart.Name = "BtnStart";
             BtnStart.Size = new Size(75, 28);
@@ -176,7 +166,7 @@
             ChkBoss.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             ChkBoss.Enabled = false;
             ChkBoss.Location = new Point(123, 7);
-            ChkBoss.Name = "ChkBoss";
+            ChkBoss.Name = user_name;
             ChkBoss.Size = new Size(50, 20);
             ChkBoss.TabIndex = 0;
             ChkBoss.Text = "방장";
@@ -195,13 +185,14 @@
             Controls.Add(BtnSend);
             Controls.Add(panel1);
             Controls.Add(TlpBingo);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "Bingo";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Bingo";
             FormClosing += Bingo_FormClosing;
             Load += Bingo_Load;
             panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             panel2.ResumeLayout(false);
             FlpStatus.ResumeLayout(false);
             ResumeLayout(false);
@@ -219,7 +210,6 @@
         private Panel panel2;
         private Label label2;
         private FlowLayoutPanel FlpParticipant;
-        private TextBox TxtCmd;
         private FlowLayoutPanel FlpStatus;
         private Button BtnStart;
         private CheckBox ChkBoss;

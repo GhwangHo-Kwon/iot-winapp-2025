@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using Org.BouncyCastle.Tls;
 using StackExchange.Redis;
 
@@ -18,6 +20,7 @@ namespace toyproject
         static User user = Program.user;
         string user_name = user.User_Name();
         string Ch_name = "";
+        ConcurrentQueue<string> SysCmd = new ConcurrentQueue<string>();
 
         long user_num = 0;
 
@@ -80,6 +83,7 @@ namespace toyproject
                 if (subcnt <= 1)
                 {
                     ChkBoss.Checked = true;
+                    BtnStart.Enabled = true;
                     Console.WriteLine("방장입니다.");
                 }
             }
@@ -141,13 +145,32 @@ namespace toyproject
 
             string[] txt_parse = message.Split(' ');
 
-            if (txt_parse[0] == user_name)
+            if (txt_parse[1] == "/방장")
             {
-                TxtChannel.SelectionAlignment = HorizontalAlignment.Right;
+                if (txt_parse[3] == "O")
+                {
+                    if (ChkBoss.Name == txt_parse[2])
+                    {
+                        ChkBoss.Checked = true;
+                        BtnStart.Enabled = true;
+                    }
+
+                    message = $"{txt_parse[2]}님에게 방장을 넘겼습니다.";
+                    TxtChannel.SelectionAlignment = HorizontalAlignment.Center;
+                }
+                else
+                {
+                    message = $"{txt_parse[2]}님은 없습니다. 다시 입력해 주세요.";
+                    TxtChannel.SelectionAlignment = HorizontalAlignment.Center;
+                }
             }
             else if (txt_parse[1] == "들어오셨습니다!")
             {
                 TxtChannel.SelectionAlignment = HorizontalAlignment.Center;
+            }
+            else if (txt_parse[0] == user_name)
+            {
+                TxtChannel.SelectionAlignment = HorizontalAlignment.Right;
             }
             else
             {
@@ -165,9 +188,65 @@ namespace toyproject
             {
                 var db = RedisConn.RedisDB;
 
+                if (TxtSend.Text.Split(' ')[0] == "/방장")
+                {
+                    if (ChkBoss.Checked)
+                    {
+                        if (TxtSend.Text.Split(' ')[1] != user_name) Boss_Auth();
+                        else MessageBox.Show("당신은 이미 방장입니다.", "방장", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show("방장이 아닙니다!", "방장", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    TxtSend.Text = "";
+                    return;
+                }
+
                 string txt_parse = user_name + " " + TxtSend.Text + Time_Table();
                 db.Publish(Ch_name, txt_parse);
                 TxtSend.Text = "";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Redis Connection test failed: {ex.Message}");
+            }
+        }
+
+        private void Boss_Auth()
+        {
+            try
+            {
+                var db = RedisConn.RedisDB;
+                string txt_parse = "";
+
+                bool Conn_Name = false;
+
+                var Into_Names = FlpParticipant.Controls
+                        .OfType<Label>()
+                        .Select(lbl => lbl.Text)
+                        .ToList();
+
+                foreach (var names in Into_Names)
+                {
+                    if (names == TxtSend.Text.Split(' ')[1])
+                    {
+                        Conn_Name = true;
+                    }
+                }
+
+                if (!Conn_Name)
+                {
+                    txt_parse = user_name + " " + TxtSend.Text + " X";
+                }
+                else
+                {
+                    ChkBoss.Checked = false;
+                    BtnStart.Enabled = false;
+                    txt_parse = user_name + " " + TxtSend.Text + " O";
+                }
+
+                db.Publish(Ch_name, txt_parse);
             }
             catch (Exception ex)
             {
@@ -193,16 +272,42 @@ namespace toyproject
 
         private void Bingo_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var db = RedisConn.RedisDB;
-
-            string sys_name = "Sys" + Ch_name;
-            string sys_exit = "Sys:Exit " + user_name;
-            db.Publish(sys_name, sys_exit);
+            Channel_Exit();
 
             Thread.Sleep(100);
 
             WallPaper main = new WallPaper();
             main.Show();
+        }
+
+        private async Task Channel_Exit()
+        {
+            try
+            {
+                var db = RedisConn.RedisDB;
+
+                string sys_name = "Sys" + Ch_name;
+                string sys_exit = "Sys:Exit " + user_name;
+                db.Publish(sys_name, sys_exit);
+
+                if (ChkBoss.Checked)
+                {
+                    var Into_Names = FlpParticipant.Controls
+                                .OfType<Label>()
+                                .Select(lbl => lbl.Text)
+                                .ToList()[1];
+
+                    string txt_parse = user_name + " /방장 " + Into_Names + " O";
+                    db.Publish(Ch_name, txt_parse);
+                }
+
+                var sub = db.Multiplexer.GetSubscriber();
+                await sub.UnsubscribeAllAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"오류 : {ex.Message}");
+            }
         }
 
         private void Set_Table_Layout(int rows, int cols)
@@ -406,7 +511,6 @@ namespace toyproject
 
         private void Sys_Conn()
         {
-            TxtCmd.Text = "";
             try
             {
                 var db = RedisConn.RedisDB;
@@ -414,7 +518,7 @@ namespace toyproject
 
                 db.Multiplexer.GetSubscriber().Subscribe(sys_name, (channel, message) =>
                 {
-                    TxtCmd.Text = message;
+                    SysCmd.Enqueue(message);
                 });
             }
             catch (Exception ex)
@@ -426,41 +530,79 @@ namespace toyproject
         private void Sys_Cmd()
         {
             Thread.Sleep(100);
-            if (TxtCmd.InvokeRequired)
-            {
-                TxtCmd.Invoke(new MethodInvoker(Sys_Cmd));
-                return;
-            }
 
-            string cmd = TxtCmd.Text;
-            TxtCmd.Text = "";
-
-            if (!string.IsNullOrEmpty(cmd))
+            if (SysCmd.TryDequeue(out string cmd))
             {
                 string[] parse_cmd = cmd.Split(' ');
 
                 if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Into")
                 {
-                    Sys_Into(parse_cmd[1]);
+                    this.Invoke(new Action(() =>
+                    {
+                        if (ChkBoss.Checked)
+                        {
+                                Sys_Into(parse_cmd[1]);
+                                Sys_Into_Boss();
+                        }
+                    }));
+                }
+                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:IntoList" && !ChkBoss.Checked)
+                {
+                    this.Invoke(new Action(() =>
+                    {
+                        string[] participants = cmd.Substring("Sys:IntoList ".Length).Split(',');
+
+                        foreach (var names in participants)
+                        {
+                            if (!FlpParticipant.Controls.OfType<Label>().Any(l => l.Tag?.ToString() == names))
+                            {
+                                Sys_Into(names);
+                            }
+                        }
+                    }));
                 }
                 else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Exit")
                 {
-                    Sys_Exit(parse_cmd[1]);
+                    this.Invoke(new Action(() =>
+                    {
+                        Sys_Exit(parse_cmd[1]);
+                    }));
                 }
                 else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Start")
                 {
-                    Set_Table_Layout(5, 5);
+                    this.Invoke(new Action(() =>
+                    {
+                        Set_Table_Layout(5, 5);
+
+                        if (ChkBoss.Checked)
+                        {
+                            BtnStart.Enabled = false;
+                        }
+                    }));
+
                     user_num = RedisConn.Sub_Count(Ch_name);
                 }
                 else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Finish")
                 {
-                    MessageBox.Show($"{parse_cmd[1]}님의 빙고!\r\n게임을 종료합니다.", "빙고여부", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    TlpBingo.Controls.Clear();
+                    this.Invoke(new Action(() =>
+                    {
+                        MessageBox.Show($"{parse_cmd[1]}님의 빙고!\r\n게임을 종료합니다.", "빙고여부", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        TlpBingo.Controls.Clear();
+
+                        if (ChkBoss.Checked)
+                        {
+                            BtnStart.Enabled = true;
+                        }
+                    }));
                 }
                 else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Click")
                 {
-                    Bingo_Select(parse_cmd[1]);
+                    this.Invoke(new Action(() =>
+                    {
+                        Bingo_Select(parse_cmd[1]);
+                    }));
                 }
+                else { }
             }
         }
 
@@ -475,6 +617,30 @@ namespace toyproject
             lbl.AutoSize = true;
 
             FlpParticipant.Controls.Add(lbl);
+        }
+
+        private void Sys_Into_Boss()
+        {
+            var Into_Names = FlpParticipant.Controls
+                            .OfType<Label>()
+                            .Select(lbl => lbl.Text)
+                            .ToList();
+
+            string ParticipantList = string.Join(",", Into_Names);
+
+            try
+            {
+                var db = RedisConn.RedisDB;
+
+                string sys_name = "Sys" + Ch_name;
+                string sys_into = "Sys:IntoList " + ParticipantList;
+
+                db.Publish(sys_name, sys_into);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Redis Connection test failed: {ex.Message}");
+            }
         }
 
         private void Sys_Exit(string exit_name)

@@ -32,7 +32,6 @@
             ImlCatchImg = new ImageList(components);
             TlpSamePic = new TableLayoutPanel();
             panel1 = new Panel();
-            TxtCmd = new TextBox();
             label1 = new Label();
             TxtChannel = new RichTextBox();
             TxtSend = new TextBox();
@@ -69,21 +68,11 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(TxtCmd);
             panel1.Controls.Add(label1);
             panel1.Location = new Point(12, 12);
             panel1.Name = "panel1";
             panel1.Size = new Size(500, 58);
             panel1.TabIndex = 3;
-            // 
-            // TxtCmd
-            // 
-            TxtCmd.BorderStyle = BorderStyle.FixedSingle;
-            TxtCmd.Location = new Point(0, 0);
-            TxtCmd.Name = "TxtCmd";
-            TxtCmd.Size = new Size(100, 23);
-            TxtCmd.TabIndex = 13;
-            TxtCmd.Visible = false;
             // 
             // label1
             // 
@@ -203,13 +192,14 @@
             Controls.Add(BtnSend);
             Controls.Add(panel1);
             Controls.Add(TlpSamePic);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "SamePicture";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "SamePicture";
             FormClosing += SamePicture_FormClosing;
             Load += SamePicture_Load;
             panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             panel2.ResumeLayout(false);
             FlpStatus.ResumeLayout(false);
             ResumeLayout(false);
@@ -225,7 +215,6 @@
         private RichTextBox TxtChannel;
         private TextBox TxtSend;
         private Button BtnSend;
-        private TextBox TxtCmd;
         private FlowLayoutPanel FlpParticipant;
         private Panel panel2;
         private Label label2;
