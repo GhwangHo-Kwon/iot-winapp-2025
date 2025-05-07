@@ -1068,5 +1068,19 @@ IoT 개발자 C#/WinApp 리포지토리 2025
 ### 코딩테스트
 
 ### ToyProject
+
+https://github.com/user-attachments/assets/51781430-d799-4ed6-a2f9-cd6ae3aa2a3e
+
+
+https://github.com/user-attachments/assets/7284612c-1534-4982-b621-09bbadcd8ad6
+
+
+https://github.com/user-attachments/assets/eab5f75f-ba31-40e3-ab77-a6ee1bae836b
+
+
+https://github.com/user-attachments/assets/bdd3ef4f-ac2a-42b3-9b00-590549c75d7e
+
+
+
 - 토이프로젝트 구동 추가 데이터
     - https://drive.google.com/file/d/1LeNInX2h5n2zle8GjTGwzt3r0kWb8M15/view?usp=sharing
