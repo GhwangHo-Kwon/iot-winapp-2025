@@ -31,6 +31,8 @@ namespace toyproject
 
         long user_num = 0;
 
+        bool isRunning = true;
+
         public SamePicture(string BtnName)
         {
             Ch_name = BtnName;
@@ -43,7 +45,7 @@ namespace toyproject
 
             Task.Run(() =>
             {
-                while (true)
+                while (isRunning)
                 {
                     try
                     {
@@ -285,6 +287,7 @@ namespace toyproject
         private void SamePicture_FormClosing(object sender, FormClosingEventArgs e)
         {
             Channel_Exit();
+            isRunning = false;
 
             Thread.Sleep(100);
 
@@ -506,7 +509,7 @@ namespace toyproject
 
                     db.Publish(sys_name, sys_finish);
 
-                    MessageBox.Show("잠시만 기다려 주세요!\r\n결과 집계중입니다.", "결과", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("잠시만 기다려 주세요!\r\n집계 후 채팅창에 결과가 나옵니다.", "결과", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
@@ -537,84 +540,103 @@ namespace toyproject
         {
             Thread.Sleep(100);
 
-            if (SysCmd.TryDequeue(out string cmd))
+            try
             {
-                string[] parse_cmd = cmd.Split(' ');
+                if (SysCmd.TryDequeue(out string cmd))
+                {
+                    string[] parse_cmd = cmd.Split(' ');
 
-                if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Into")
-                {
-                    this.Invoke(new Action(() =>
+                    if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Into")
                     {
-                        if (ChkBoss.Checked)
-                        {
-                            Sys_Into(parse_cmd[1]);
-                            Sys_Into_Boss();
-                        }
-                    }));
-                }
-                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:IntoList" && !ChkBoss.Checked)
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        string[] participants = cmd.Substring("Sys:IntoList ".Length).Split(',');
-
-                        foreach (var names in participants)
-                        {
-                            if (!FlpParticipant.Controls.OfType<Label>().Any(l => l.Tag?.ToString() == names))
-                            {
-                                Sys_Into(names);
-                            }
-                        }
-                    }));
-                }
-                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Exit")
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        Sys_Exit(parse_cmd[1]);
-                    }));
-                }
-                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Start")
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        Set_Table_Layout(4, 4);
-
-                        if (ChkBoss.Checked)
-                        {
-                            BtnStart.Enabled = false;
-                        }
-                    }));
-
-                    Stopwatch.Start();
-
-                    user_num = RedisConn.Sub_Count(Ch_name);
-                }
-                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Score")
-                {
-                    if (Score.Count != user_num)
-                    {
-                        TimeSpan score = TimeSpan.Parse(parse_cmd[2]);
-                        Score.Add(parse_cmd[1], score);
-                    }
-                }
-                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Finish")
-                {
-                    if ((Score.Count == user_num) && (ChkBoss.Checked == true))
-                    {
-                        Total_Score();
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
 
                         this.Invoke(new Action(() =>
                         {
-                            TlpSamePic.Visible = false;
                             if (ChkBoss.Checked)
                             {
-                                BtnStart.Enabled = true;
+                                Sys_Into(parse_cmd[1]);
+                                Sys_Into_Boss();
                             }
                         }));
                     }
+                    else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:IntoList" && !ChkBoss.Checked)
+                    {
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        this.Invoke(new Action(() =>
+                        {
+                            string[] participants = cmd.Substring("Sys:IntoList ".Length).Split(',');
+
+                            foreach (var names in participants)
+                            {
+                                if (!FlpParticipant.Controls.OfType<Label>().Any(l => l.Tag?.ToString() == names))
+                                {
+                                    Sys_Into(names);
+                                }
+                            }
+                        }));
+                    }
+                    else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Exit")
+                    {
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        this.Invoke(new Action(() =>
+                        {
+                            Sys_Exit(parse_cmd[1]);
+                        }));
+                    }
+                    else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Start")
+                    {
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        this.Invoke(new Action(() =>
+                        {
+                            Set_Table_Layout(4, 4);
+
+                            if (ChkBoss.Checked)
+                            {
+                                BtnStart.Enabled = false;
+                            }
+                        }));
+
+                        Stopwatch.Start();
+
+                        user_num = RedisConn.Sub_Count(Ch_name);
+                    }
+                    else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Score")
+                    {
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        if (Score.Count != user_num)
+                        {
+                            TimeSpan score = TimeSpan.Parse(parse_cmd[2]);
+                            Score.Add(parse_cmd[1], score);
+                        }
+                    }
+                    else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Finish")
+                    {
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        if ((Score.Count == user_num) && (ChkBoss.Checked == true))
+                        {
+                            Total_Score();
+
+                            this.Invoke(new Action(() =>
+                            {
+                                TlpSamePic.Visible = false;
+                                if (ChkBoss.Checked)
+                                {
+                                    BtnStart.Enabled = true;
+                                }
+                            }));
+                        }
+                    }
+                    else { }
                 }
-                else { }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"에러 : {ex.Message}");
             }
         }
 
@@ -632,7 +654,7 @@ namespace toyproject
                 {
                     var value = string.Format("{0:D2}:{1:D2}:{2:00.##}", item.Value.Hours, item.Value.Minutes, item.Value.Seconds + item.Value.Milliseconds / 1000.0);
 
-                    total_score.Add($"{i}. {item.Key} : {value}");
+                    total_score.Add($"{i}위. {item.Key} : {value}");
                     
                     i++;
                 }

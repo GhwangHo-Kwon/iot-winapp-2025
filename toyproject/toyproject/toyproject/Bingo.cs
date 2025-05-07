@@ -20,7 +20,15 @@ namespace toyproject
         static User user = Program.user;
         string user_name = user.User_Name();
         string Ch_name = "";
+        List<string> Start_users = new List<string>();
+
+        bool MyTurn = false;
+        bool isRunning = true;
+        int curr_turn = 0;
+
         ConcurrentQueue<string> SysCmd = new ConcurrentQueue<string>();
+
+        List<string> Result = new List<string>();
 
         long user_num = 0;
 
@@ -36,7 +44,7 @@ namespace toyproject
 
             Task.Run(() =>
             {
-                while (true)
+                while (isRunning)
                 {
                     try
                     {
@@ -145,7 +153,17 @@ namespace toyproject
 
             string[] txt_parse = message.Split(' ');
 
-            if (txt_parse[1] == "/방장")
+            if (message.Split('|')[0] == "/결과")
+            {
+                message = "Result\r\n" + message.Split('|')[1];
+                TxtChannel.SelectionAlignment = HorizontalAlignment.Center;
+            }
+            else if (message.Split('|')[0] == "/차례")
+            {
+                message = message.Split('|')[1];
+                TxtChannel.SelectionAlignment = HorizontalAlignment.Center;
+            }
+            else if (txt_parse[1] == "/방장")
             {
                 if (txt_parse[3] == "O")
                 {
@@ -273,6 +291,7 @@ namespace toyproject
         private void Bingo_FormClosing(object sender, FormClosingEventArgs e)
         {
             Channel_Exit();
+            isRunning = false;
 
             Thread.Sleep(100);
 
@@ -370,6 +389,12 @@ namespace toyproject
 
         private void Bingo_Click(object sender, EventArgs e)
         {
+            if (!MyTurn)
+            {
+                MessageBox.Show("아직 차례가 아닙니다!", "차례", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             Button btn = sender as Button;
 
             string btn_name = btn.Name;
@@ -379,9 +404,11 @@ namespace toyproject
                 var db = RedisConn.RedisDB;
 
                 string sys_name = "Sys" + Ch_name;
-                string sys_into = "Sys:Click " + btn.Name;
+                string sys_click = "Sys:Click " + btn.Name;
 
-                db.Publish(sys_name, sys_into);
+                db.Publish(sys_name, sys_click);
+
+                MyTurn = false;
             }
             catch (Exception ex)
             {
@@ -404,9 +431,14 @@ namespace toyproject
                         var db = RedisConn.RedisDB;
 
                         string sys_name = "Sys" + Ch_name;
-                        string sys_into = "Sys:Finish " + user_name;
+                        string sys_result = "Sys:Result " + user_name;
+                        string sys_finish = "Sys:Finish " + user_name;
 
-                        db.Publish(sys_name, sys_into);
+                        db.Publish(sys_name, sys_result);
+
+                        Thread.Sleep(200);
+
+                        db.Publish(sys_name, sys_finish);
                     }
                     catch (Exception ex)
                     {
@@ -531,78 +563,193 @@ namespace toyproject
         {
             Thread.Sleep(100);
 
-            if (SysCmd.TryDequeue(out string cmd))
+            try
             {
-                string[] parse_cmd = cmd.Split(' ');
-
-                if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Into")
+                if (SysCmd.TryDequeue(out string cmd))
                 {
-                    this.Invoke(new Action(() =>
+                    string[] parse_cmd = cmd.Split(' ');
+
+                    if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Into")
                     {
-                        if (ChkBoss.Checked)
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        this.Invoke(new Action(() =>
                         {
+                            if (ChkBoss.Checked)
+                            {
                                 Sys_Into(parse_cmd[1]);
                                 Sys_Into_Boss();
-                        }
-                    }));
-                }
-                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:IntoList" && !ChkBoss.Checked)
-                {
-                    this.Invoke(new Action(() =>
+                            }
+                        }));
+                    }
+                    else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:IntoList" && !ChkBoss.Checked)
                     {
-                        string[] participants = cmd.Substring("Sys:IntoList ".Length).Split(',');
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
 
-                        foreach (var names in participants)
+                        this.Invoke(new Action(() =>
                         {
-                            if (!FlpParticipant.Controls.OfType<Label>().Any(l => l.Tag?.ToString() == names))
+                            string[] participants = cmd.Substring("Sys:IntoList ".Length).Split(',');
+
+                            foreach (var names in participants)
                             {
-                                Sys_Into(names);
+                                if (!FlpParticipant.Controls.OfType<Label>().Any(l => l.Tag?.ToString() == names))
+                                {
+                                    Sys_Into(names);
+                                }
+                            }
+                        }));
+                    }
+                    else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Exit")
+                    {
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        this.Invoke(new Action(() =>
+                        {
+                            Sys_Exit(parse_cmd[1]);
+                        }));
+                    }
+                    else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Start")
+                    {
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        if (ChkBoss.Checked)
+                        {
+                            Start_Game();
+                        }
+
+                        this.Invoke(new Action(() =>
+                        {
+                            Set_Table_Layout(5, 5);
+
+                            if (ChkBoss.Checked)
+                            {
+                                BtnStart.Enabled = false;
+                            }
+                        }));
+                    }
+                    else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Result")
+                    {
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        Result.Add(parse_cmd[1]);
+
+                        this.Invoke(new Action(() =>
+                        {
+                            TlpBingo.Controls.Clear();
+
+                            if (ChkBoss.Checked)
+                            {
+                                BtnStart.Enabled = true;
+                            }
+                        }));
+
+                    }
+                    else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Finish")
+                    {
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        if (SysCmd.Count <= 1)
+                        {
+                            MessageBox.Show("누군가의 빙고!\r\n빙고 결과는 채팅창에 출력됩니다!", "빙고", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            if (ChkBoss.Checked)
+                            {
+                                Total_Score();
                             }
                         }
-                    }));
-                }
-                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Exit")
-                {
-                    this.Invoke(new Action(() =>
+                    }
+                    else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Turn")
                     {
-                        Sys_Exit(parse_cmd[1]);
-                    }));
-                }
-                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Start")
-                {
-                    this.Invoke(new Action(() =>
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        if (user_name == parse_cmd[1])
+                        {
+                            MyTurn = true;
+                        }
+                    }
+                    else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Click")
                     {
-                        Set_Table_Layout(5, 5);
+                        if (this.IsDisposed || !this.IsHandleCreated) return;
+
+                        this.Invoke(new Action(() =>
+                        {
+                            Bingo_Select(parse_cmd[1]);
+                        }));
 
                         if (ChkBoss.Checked)
                         {
-                            BtnStart.Enabled = false;
+                            Next_Turn();
                         }
-                    }));
+                    }
+                    else { }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"에러 : {ex.Message}");
+            }
+        }
 
-                    user_num = RedisConn.Sub_Count(Ch_name);
-                }
-                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Finish")
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        MessageBox.Show($"{parse_cmd[1]}님의 빙고!\r\n게임을 종료합니다.", "빙고여부", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        TlpBingo.Controls.Clear();
+        private void Total_Score()
+        {
+            try
+            {
+                var db = RedisConn.RedisDB;
 
-                        if (ChkBoss.Checked)
-                        {
-                            BtnStart.Enabled = true;
-                        }
-                    }));
-                }
-                else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Click")
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        Bingo_Select(parse_cmd[1]);
-                    }));
-                }
-                else { }
+                string result = string.Join(", ", Result);
+
+                db.Publish(Ch_name, "/결과|" + result + "님이 빙고하셨습니다!");
+
+                Result.Clear();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"오류 : {ex.Message}");
+            }
+        }
+
+        private void Start_Game()
+        {
+            try
+            {
+                Start_users = FlpParticipant.Controls
+                            .OfType<Label>()
+                            .Select(lbl => lbl.Text)
+                            .ToList();
+                user_num = RedisConn.Sub_Count(Ch_name);
+
+                var db = RedisConn.RedisDB;
+
+                string sys_name = "Sys" + Ch_name;
+                string sys_turn = "Sys:Turn " + Start_users[0];
+
+                string turns = "/차례|차례는 " + string.Join(" → ", Start_users) + " 순으로 진행됩니다!";
+
+                db.Publish(sys_name, sys_turn);
+
+                db.Publish(Ch_name, turns);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"에러 : {ex.Message}");
+            }
+        }
+
+        private void Next_Turn()
+        {
+            try
+            {
+                var db = RedisConn.RedisDB;
+
+                curr_turn = (curr_turn + 1) % (int)user_num;
+                string next_turn = "Sys:Turn " + Start_users[curr_turn];
+                string sys_name = "Sys" + Ch_name;
+
+                db.Publish(sys_name, next_turn);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"에러 : {ex.Message}");
             }
         }
 

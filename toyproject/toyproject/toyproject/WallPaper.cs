@@ -99,7 +99,7 @@ namespace toyproject
                     BtnSamePic.Tag = $"SamePicture:{Btn_idx}";
                     BtnSamePic.Font = new Font(Font.FontFamily, 12);
                     BtnSamePic.Name = $"SamePicture:{Btn_idx}";
-                    BtnSamePic.Text = $"서버 {Btn_idx}";
+                    BtnSamePic.Text = $"채널\r\n{Btn_idx}";
                     BtnSamePic.Dock = DockStyle.Fill;
                     BtnSamePic.Click += BtnPicServer_Click;
 
@@ -156,7 +156,7 @@ namespace toyproject
                     BtnBingo.Tag = $"Bingo:{Btn_idx}";
                     BtnBingo.Font = new Font(Font.FontFamily, 12);
                     BtnBingo.Name = $"Bingo:{Btn_idx}";
-                    BtnBingo.Text = $"서버 {Btn_idx}";
+                    BtnBingo.Text = $"채널\r\n{Btn_idx}";
                     BtnBingo.Dock = DockStyle.Fill;
                     BtnBingo.Click += BtnBingoServer_Click;
 
@@ -213,7 +213,7 @@ namespace toyproject
                     BtnTetris.Tag = $"Tetris:{Btn_idx}";
                     BtnTetris.Font = new Font(Font.FontFamily, 12);
                     BtnTetris.Name = $"Tetris:{Btn_idx}";
-                    BtnTetris.Text = $"서버 {Btn_idx}";
+                    BtnTetris.Text = $"채널\r\n{Btn_idx}";
                     BtnTetris.Dock = DockStyle.Fill;
                     BtnTetris.Click += BtnTetrisServer_Click;
 
