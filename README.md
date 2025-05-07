@@ -1069,16 +1069,22 @@ IoT 개발자 C#/WinApp 리포지토리 2025
 
 ### ToyProject
 
-https://github.com/user-attachments/assets/51781430-d799-4ed6-a2f9-cd6ae3aa2a3e
+#### MiniGame
+    - 로그인 및 회원가입
 
+        https://github.com/user-attachments/assets/51781430-d799-4ed6-a2f9-cd6ae3aa2a3e
 
-https://github.com/user-attachments/assets/7284612c-1534-4982-b621-09bbadcd8ad6
+    - 로그인 후 게임 선택 및 채널 선택화면
+        
+        https://github.com/user-attachments/assets/7284612c-1534-4982-b621-09bbadcd8ad6
 
+    - 같은그림찾기
+        
+        https://github.com/user-attachments/assets/eab5f75f-ba31-40e3-ab77-a6ee1bae836b
 
-https://github.com/user-attachments/assets/eab5f75f-ba31-40e3-ab77-a6ee1bae836b
-
-
-https://github.com/user-attachments/assets/bdd3ef4f-ac2a-42b3-9b00-590549c75d7e
+    - 빙고
+        
+        https://github.com/user-attachments/assets/bdd3ef4f-ac2a-42b3-9b00-590549c75d7e
 
 
 
