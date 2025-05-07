@@ -626,6 +626,8 @@ namespace toyproject
                                 BtnStart.Enabled = false;
                             }
                         }));
+
+                        Result.Clear();
                     }
                     else if (parse_cmd.Length > 0 && parse_cmd[0] == "Sys:Result")
                     {
@@ -699,8 +701,6 @@ namespace toyproject
                 string result = string.Join(", ", Result);
 
                 db.Publish(Ch_name, "/결과|" + result + "님이 빙고하셨습니다!");
-
-                Result.Clear();
             }
             catch (Exception ex)
             {

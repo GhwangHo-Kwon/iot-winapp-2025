@@ -510,6 +510,12 @@ namespace toyproject
                     db.Publish(sys_name, sys_finish);
 
                     MessageBox.Show("잠시만 기다려 주세요!\r\n집계 후 채팅창에 결과가 나옵니다.", "결과", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    this.Invoke(new Action(() =>
+                    {
+                        TlpSamePic.Visible = false;
+                    }));
+
                 }
                 catch (Exception ex)
                 {
@@ -623,7 +629,6 @@ namespace toyproject
 
                             this.Invoke(new Action(() =>
                             {
-                                TlpSamePic.Visible = false;
                                 if (ChkBoss.Checked)
                                 {
                                     BtnStart.Enabled = true;

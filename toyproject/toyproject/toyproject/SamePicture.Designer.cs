@@ -173,7 +173,7 @@
             ChkBoss.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             ChkBoss.Enabled = false;
             ChkBoss.Location = new Point(123, 7);
-            ChkBoss.Name = "ChkBoss";
+            ChkBoss.Name = user_name;
             ChkBoss.Size = new Size(50, 20);
             ChkBoss.TabIndex = 0;
             ChkBoss.Text = "방장";
